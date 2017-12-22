@@ -33,21 +33,34 @@ namespace Localwire.AlgoToolkit.Structures.Graphs
 
         public bool AddNeighbour(Node<TKey> node)
         {
+            if (node == null) return false;
             if (_neighbours.ContainsKey(node.Key)) return false;
             _neighbours.Add(node.Key, node);
             return true;
         }
 
+        public bool RemoveNeighbour(TKey nodeKey)
+        {
+            if (!_neighbours.ContainsKey(nodeKey)) return false;
+            _neighbours.Remove(nodeKey);
+            return true;
+        }
+
         public bool RemoveNeighbour(Node<TKey> node)
         {
-            if (!_neighbours.ContainsKey(node.Key)) return false;
-            _neighbours.Remove(node.Key);
-            return true;
+            if (node == null) return false;
+            return RemoveNeighbour(node.Key);
+        }
+
+        public bool HasNeighbour(TKey nodeKey)
+        {
+            return _neighbours.ContainsKey(nodeKey);
         }
 
         public bool HasNeighbour(Node<TKey> node)
         {
-            return _neighbours.ContainsKey(node.Key);
+            if (node == null) return false;
+            return HasNeighbour(node.Key);
         }
     }
 }
