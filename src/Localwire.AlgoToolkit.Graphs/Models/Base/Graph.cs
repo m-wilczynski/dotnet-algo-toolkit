@@ -1,4 +1,4 @@
-namespace Localwire.AlgoToolkit.Structures.Graphs
+namespace Localwire.AlgoToolkit.Graphs
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;

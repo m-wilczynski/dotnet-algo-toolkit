@@ -1,6 +1,6 @@
-namespace Localwire.AlgoToolkit.Structures.Graphs
+namespace Localwire.AlgoToolkit.Graphs
 {
-    public class UndirectedGraph<TKey> : Graph<TKey> where TKey : struct
+    public class UndirectedCyclicGraph<TKey> : Graph<TKey> where TKey : struct
     {
         public override bool AddEdge(TKey firstNodeKey, TKey secondNodeKey)
         {

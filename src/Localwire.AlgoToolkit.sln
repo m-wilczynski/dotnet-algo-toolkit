@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Localwire.AlgoToolkit.Structures.Graphs", "Localwire.AlgoToolkit.Structures.Graphs\Localwire.AlgoToolkit.Structures.Graphs.csproj", "{AE0420E6-B213-4A0A-817D-9D23BCDD78CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Localwire.AlgoToolkit.Graphs", "Localwire.AlgoToolkit.Graphs\Localwire.AlgoToolkit.Graphs.csproj", "{AE0420E6-B213-4A0A-817D-9D23BCDD78CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

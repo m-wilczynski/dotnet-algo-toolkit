@@ -1,4 +1,4 @@
-namespace Localwire.AlgoToolkit.Structures.Graphs
+namespace Localwire.AlgoToolkit.Graphs
 {
     using System;
     using System.Collections.Generic;
@@ -23,6 +23,11 @@ namespace Localwire.AlgoToolkit.Structures.Graphs
             if (obj == null) return false;
             var casted = obj as Node<TKey>;
             return casted == null ? false : Equals(casted);
+        }
+
+        public override int GetHashCode()
+        {
+            return Key.GetHashCode();
         }
 
         public bool Equals(Node<TKey> otherNode)
