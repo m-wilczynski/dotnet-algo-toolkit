@@ -37,5 +37,11 @@ namespace Localwire.AlgoToolkit.Graphs
         {
             return _nodes.ContainsKey(nodeKey);
         }
+
+        public bool HasNode(Node<TKey> node)
+        {
+            if (node == null) return false;
+            return HasNode(node.Key);
+        }
     }
 }
