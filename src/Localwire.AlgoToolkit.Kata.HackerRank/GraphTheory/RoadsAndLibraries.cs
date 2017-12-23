@@ -51,7 +51,7 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
             if (easyCasesResult.HasValue) return easyCasesResult.Value;
 
             HashSet<UndirectedCyclicGraph<int>> graphs = new HashSet<UndirectedCyclicGraph<int>>();
-            Node<int>[] nodes = Enumerable.Range(1, numOfCities).Select(idx => new Node<int>(idx)).ToArray();
+            Node<int, UndirectedCyclicGraph<int>>[] nodes = Enumerable.Range(1, numOfCities).Select(idx => new Node<int, UndirectedCyclicGraph<int>>(idx)).ToArray();
 
             foreach (var road in roads)
             {
@@ -74,19 +74,18 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
                     else
                     {
                         graph.AddEdgeWithNodes(firstNode, secondNode);
-                        //CombineAllGraphsYouCan(graphs, graph, firstNode, secondNode);
                     }
                 }
             }
 
             var nodesWithNoRoads = CombineAllGraphsOf(nodes);
 
-            return new HashSet<Graph<int>>(nodes.SelectMany(n => n.GraphsThatIncludeThisNode))
+            return new HashSet<UndirectedCyclicGraph<int>>(nodes.SelectMany(n => n.GraphsThatIncludeThisNode))
                 .Sum(graph => roadCost * (graph.Nodes.Count - 1) + libCost) + nodesWithNoRoads * libCost;
         }
 
         //Return nodes that belong to no graph (ie. have no road)
-        public static int CombineAllGraphsOf(ICollection<Node<int>> nodes)
+        public static int CombineAllGraphsOf(ICollection<Node<int, UndirectedCyclicGraph<int>>> nodes)
         {
             var noRoadNodes = 0;
             foreach (var node in nodes)
@@ -98,22 +97,6 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
             }
 
             return noRoadNodes;
-        }
-
-        public static void CombineAllGraphsYouCan(HashSet<UndirectedCyclicGraph<int>> allGraphs, 
-            UndirectedCyclicGraph<int> modifiedGraph, Node<int> edgeFirstNode, Node<int> edgeSecondNode)
-        {
-            var graphsToRemove = new HashSet<UndirectedCyclicGraph<int>>();
-
-            foreach (var existingGraph in allGraphs)
-            {
-                if (modifiedGraph.ConnectAnotherGraphToMe(existingGraph, edgeFirstNode, edgeSecondNode))
-                    graphsToRemove.Add(existingGraph);
-            }
-            foreach (var graphToRemove in graphsToRemove)
-            {
-                allGraphs.Remove(graphToRemove);
-            }
         }
 
         public static long? CheckEasyCases(int numOfCities, int numOfRoads, long libCost, long roadCost, IEnumerable<Tuple<int, int>> roads)

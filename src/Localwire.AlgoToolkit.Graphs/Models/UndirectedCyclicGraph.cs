@@ -1,11 +1,65 @@
 namespace Localwire.AlgoToolkit.Graphs
 {
     using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
 
-    public class UndirectedCyclicGraph<TKey> : Graph<TKey> where TKey : struct
+    public class UndirectedCyclicGraph<TKey> : IGraph<TKey> where TKey : struct
     {
-        public override bool AddEdge(TKey firstNodeKey, TKey secondNodeKey)
+        protected readonly Dictionary<TKey, Node<TKey, UndirectedCyclicGraph<TKey>>> _nodes = new Dictionary<TKey, Node<TKey, UndirectedCyclicGraph<TKey>>>();
+
+        public ReadOnlyDictionary<TKey, Node<TKey, UndirectedCyclicGraph<TKey>>> Nodes => new ReadOnlyDictionary<TKey, Node<TKey, UndirectedCyclicGraph<TKey>>>(_nodes);
+
+        public bool AddNode(TKey nodeKey)
+        {
+            if (_nodes.ContainsKey(nodeKey)) return false;
+            return AddNode(new Node<TKey, UndirectedCyclicGraph<TKey>>(nodeKey));
+        }
+
+        public bool AddNode(Node<TKey, UndirectedCyclicGraph<TKey>> node)
+        {
+            if (node == null) return false;
+            if (_nodes.ContainsKey(node.Key)) return false;
+            _nodes.Add(node.Key, node);
+            node.GraphsThatIncludeThisNode.Add(this);
+            return true;
+        }
+
+        public bool RemoveNode(TKey nodeKey)
+        {
+            if (!_nodes.ContainsKey(nodeKey)) return false;
+            _nodes[nodeKey].GraphsThatIncludeThisNode.Remove(this);
+            _nodes.Remove(nodeKey);
+            return true;
+        }
+
+        public bool HasNode(TKey nodeKey)
+        {
+            return _nodes.ContainsKey(nodeKey);
+        }
+
+        public bool HasNode(Node<TKey, UndirectedCyclicGraph<TKey>> node)
+        {
+            if (node == null) return false;
+            return HasNode(node.Key);
+        }
+
+        public bool AddEdgeWithNodes(TKey firstNodeKey, TKey secondNodeKey)
+        {
+            AddNode(firstNodeKey);
+            AddNode(secondNodeKey);
+            return AddEdge(firstNodeKey, secondNodeKey);
+        }
+
+        public bool AddEdgeWithNodes(Node<TKey, UndirectedCyclicGraph<TKey>> firstNode, Node<TKey, UndirectedCyclicGraph<TKey>> secondNode)
+        {
+            AddNode(firstNode);
+            AddNode(secondNode);
+            return AddEdge(firstNode, secondNode);
+        }
+
+        public bool AddEdge(TKey firstNodeKey, TKey secondNodeKey)
         {
             if (!HasNode(firstNodeKey) || !HasNode(secondNodeKey))
             {
@@ -17,7 +71,7 @@ namespace Localwire.AlgoToolkit.Graphs
             return true;
         }
 
-        public override bool AddEdge(Node<TKey> firstNode, Node<TKey> secondNode)
+        public bool AddEdge(Node<TKey, UndirectedCyclicGraph<TKey>> firstNode, Node<TKey, UndirectedCyclicGraph<TKey>> secondNode)
         {
             if (!HasNode(firstNode) || !HasNode(secondNode))
             {
@@ -29,7 +83,7 @@ namespace Localwire.AlgoToolkit.Graphs
             return true;
         }
 
-        public override bool RemoveEdge(TKey firstNodeKey, TKey secondNodeKey)
+        public bool RemoveEdge(TKey firstNodeKey, TKey secondNodeKey)
         {
             if (!_nodes.ContainsKey(firstNodeKey) || !_nodes.ContainsKey(secondNodeKey))
             {
@@ -46,7 +100,7 @@ namespace Localwire.AlgoToolkit.Graphs
             return true;
         }
 
-        public override bool ClearNodes()
+        public bool ClearNodes()
         {
             foreach (var node in _nodes.Values)
             {
@@ -56,7 +110,7 @@ namespace Localwire.AlgoToolkit.Graphs
             return true;
         }
 
-        public bool CanCombineWith(UndirectedCyclicGraph<TKey> anotherGraph, Node<TKey> edgeFirstNode, Node<TKey> edgeSecondNode)
+        public bool CanCombineWith(UndirectedCyclicGraph<TKey> anotherGraph, Node<TKey, UndirectedCyclicGraph<TKey>> edgeFirstNode, Node<TKey, UndirectedCyclicGraph<TKey>> edgeSecondNode)
         {
             if (anotherGraph == null) return false;
             if (anotherGraph.Equals(this)) return false;
@@ -64,7 +118,7 @@ namespace Localwire.AlgoToolkit.Graphs
                 || (edgeSecondNode.GraphsThatIncludeThisNode.Contains(this) && edgeSecondNode.GraphsThatIncludeThisNode.Contains(anotherGraph));
         }
 
-        public bool ConnectAnotherGraphToMe(UndirectedCyclicGraph<TKey> anotherGraph, Node<TKey> edgeFirstNode, Node<TKey> edgeSecondNode)
+        public bool ConnectAnotherGraphToMe(UndirectedCyclicGraph<TKey> anotherGraph, Node<TKey, UndirectedCyclicGraph<TKey>> edgeFirstNode, Node<TKey, UndirectedCyclicGraph<TKey>> edgeSecondNode)
         {
             if (!CanCombineWith(anotherGraph, edgeFirstNode, edgeSecondNode)) return false;
             foreach (var node in anotherGraph.Nodes.Values)
@@ -84,7 +138,7 @@ namespace Localwire.AlgoToolkit.Graphs
             return graph;
         }
 
-        public static UndirectedCyclicGraph<TKey> CreateNewFromFirstEdge(Node<TKey> firstNode, Node<TKey> secondNode)
+        public static UndirectedCyclicGraph<TKey> CreateNewFromFirstEdge(Node<TKey, UndirectedCyclicGraph<TKey>> firstNode, Node<TKey, UndirectedCyclicGraph<TKey>> secondNode)
         {
             var graph = new UndirectedCyclicGraph<TKey>();
             graph.AddEdgeWithNodes(firstNode, secondNode);
