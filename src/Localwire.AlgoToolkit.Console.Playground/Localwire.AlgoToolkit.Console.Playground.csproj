@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.10.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Localwire.AlgoToolkit.Kata.HackerRank\Localwire.AlgoToolkit.Kata.HackerRank.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+</Project>

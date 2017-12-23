@@ -13,28 +13,35 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
             using (input)
             {
                 int q = Convert.ToInt32(input.ReadLine());
-                for (int a0 = 0; a0 < q; a0++)
+                for (int a0 = 0; a0 < 2; a0++)
                 {
                     string[] tokens_n = input.ReadLine().Split(' ');
                     int numOfCities = Convert.ToInt32(tokens_n[0]);
                     int numOfRoads = Convert.ToInt32(tokens_n[1]);
                     long libCost = Convert.ToInt64(tokens_n[2]);
                     long roadCost = Convert.ToInt64(tokens_n[3]);
-                    IEnumerable<Tuple<int, int>> roads = GetRoadsFrom(input, numOfRoads);
+                    IEnumerable<Tuple<int, int>> roads = GetRoadsFrom(input, numOfRoads, IsEasyCase(numOfCities, libCost, roadCost));
                     Console.WriteLine(SolveCase(numOfCities, numOfRoads, libCost, roadCost, roads));
                 }
             }
         }
 
         //At least makes it testable
-        private IEnumerable<Tuple<int, int>> GetRoadsFrom(TextReader input, int numOfRoads)
+        private IEnumerable<Tuple<int, int>> GetRoadsFrom(TextReader input, int numOfRoads, bool rewinding = false)
         {
             for (int a1 = 0; a1 < numOfRoads; a1++)
             {
                 string[] tokens_city_1 = input.ReadLine().Split(' ');
-                int city_1 = Convert.ToInt32(tokens_city_1[0]);
-                int city_2 = Convert.ToInt32(tokens_city_1[1]);
-                yield return new Tuple<int, int>(city_1, city_2);
+                if (!rewinding)
+                {
+                    int city_1 = Convert.ToInt32(tokens_city_1[0]);
+                    int city_2 = Convert.ToInt32(tokens_city_1[1]);
+                    yield return new Tuple<int, int>(city_1, city_2);
+                }
+                else
+                {
+                    yield return null;
+                }
             }
         }
 
@@ -44,24 +51,30 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
             if (easyCasesResult.HasValue) return easyCasesResult.Value;
 
             HashSet<UndirectedCyclicGraph<int>> graphs = new HashSet<UndirectedCyclicGraph<int>>();
+            Node<int>[] nodes = Enumerable.Range(1, numOfCities).Select(idx => new Node<int>(idx)).ToArray();
 
             foreach (var road in roads)
             {
+                var firstNode = nodes[road.Item1 - 1];
+                var secondNode = nodes[road.Item2 - 1];
+
                 if (graphs.Count == 0)
                 {
-                    graphs.Add(UndirectedCyclicGraph<int>.CreateNewFromFirstEdge(road));
+                    graphs.Add(UndirectedCyclicGraph<int>.CreateNewFromFirstEdge(firstNode, secondNode));
                 }
                 else 
                 {
-                    var graph = graphs.FirstOrDefault(gr => gr.HasNode(road.Item1) || gr.HasNode(road.Item2));
+                    UndirectedCyclicGraph<int> graph = firstNode.GraphsThatIncludeThisNode.FirstOrDefault() as UndirectedCyclicGraph<int> ?? 
+                        secondNode.GraphsThatIncludeThisNode.FirstOrDefault() as UndirectedCyclicGraph<int>;
+
                     if (graph == null)
                     {
-                       graphs.Add(UndirectedCyclicGraph<int>.CreateNewFromFirstEdge(road)); 
+                       graphs.Add(UndirectedCyclicGraph<int>.CreateNewFromFirstEdge(firstNode, secondNode)); 
                     }
                     else
                     {
-                        graph.AddEdgeWithNodes(road.Item1, road.Item2);
-                        CombineAllGraphsYouCan(graphs, graph);
+                        graph.AddEdgeWithNodes(firstNode, secondNode);
+                        CombineAllGraphsYouCan(graphs, graph, firstNode, secondNode);
                     }
                 }
             }
@@ -69,14 +82,23 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
             return graphs.Sum(graph => roadCost * (graph.Nodes.Count - 1) + libCost);
         }
 
-        private static void CombineAllGraphsYouCan(HashSet<UndirectedCyclicGraph<int>> allGraphs, UndirectedCyclicGraph<int> modifiedGraph)
+        private static void CombineAllGraphsContaining(HashSet<Node<int>> nodes)
+        {
+            foreach (var node in nodes)
+            {
+
+            }
+        }
+
+        private static void CombineAllGraphsYouCan(HashSet<UndirectedCyclicGraph<int>> allGraphs, 
+            UndirectedCyclicGraph<int> modifiedGraph, Node<int> edgeFirstNode, Node<int> edgeSecondNode)
         {
             var graphsToRemove = new HashSet<UndirectedCyclicGraph<int>>();
 
-            foreach (var existingGraph in allGraphs.Where(gr => gr.CanCombineWith(modifiedGraph)))
+            foreach (var existingGraph in allGraphs)
             {
-                modifiedGraph.ConnectAnotherGraphToMe(existingGraph);
-                graphsToRemove.Add(existingGraph);
+                if (modifiedGraph.ConnectAnotherGraphToMe(existingGraph, edgeFirstNode, edgeSecondNode))
+                    graphsToRemove.Add(existingGraph);
             }
             foreach (var graphToRemove in graphsToRemove)
             {
@@ -99,6 +121,11 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
                 return libCost * numOfCities;
             }
             return null;
+        }
+
+        private bool IsEasyCase(int numOfCities, long libCost, long roadCost)
+        {
+            return roadCost == 0 || libCost <= roadCost;
         }
     }
 }

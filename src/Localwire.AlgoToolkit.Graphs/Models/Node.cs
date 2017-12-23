@@ -9,6 +9,8 @@ namespace Localwire.AlgoToolkit.Graphs
         public readonly TKey Key;
         private readonly Dictionary<TKey, Node<TKey>> _neighbours = new Dictionary<TKey, Node<TKey>>();
 
+        public readonly HashSet<Graph<TKey>> GraphsThatIncludeThisNode = new HashSet<Graph<TKey>>();
+
         public Node(TKey key)
         {
             if (EqualityComparer<TKey>.Default.Equals(key, default(TKey)))
