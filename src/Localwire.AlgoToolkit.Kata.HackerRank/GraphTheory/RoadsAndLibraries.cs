@@ -13,7 +13,7 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
             using (input)
             {
                 int q = Convert.ToInt32(input.ReadLine());
-                for (int a0 = 0; a0 < 2; a0++)
+                for (int a0 = 0; a0 < q; a0++)
                 {
                     string[] tokens_n = input.ReadLine().Split(' ');
                     int numOfCities = Convert.ToInt32(tokens_n[0]);
