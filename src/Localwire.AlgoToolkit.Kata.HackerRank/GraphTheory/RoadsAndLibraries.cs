@@ -74,23 +74,33 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
                     else
                     {
                         graph.AddEdgeWithNodes(firstNode, secondNode);
-                        CombineAllGraphsYouCan(graphs, graph, firstNode, secondNode);
+                        //CombineAllGraphsYouCan(graphs, graph, firstNode, secondNode);
                     }
                 }
             }
 
-            return graphs.Sum(graph => roadCost * (graph.Nodes.Count - 1) + libCost) + nodes.Count(n => n.GraphsThatIncludeThisNode.Count == 0) * libCost;
+            var nodesWithNoRoads = CombineAllGraphsOf(nodes);
+
+            return new HashSet<Graph<int>>(nodes.SelectMany(n => n.GraphsThatIncludeThisNode))
+                .Sum(graph => roadCost * (graph.Nodes.Count - 1) + libCost) + nodesWithNoRoads * libCost;
         }
 
-        private static void CombineAllGraphsContaining(HashSet<Node<int>> nodes)
+        //Return nodes that belong to no graph (ie. have no road)
+        public static int CombineAllGraphsOf(ICollection<Node<int>> nodes)
         {
+            var noRoadNodes = 0;
             foreach (var node in nodes)
             {
-
+                if (node.CombineGraphsIBelongTo() == 0)
+                {
+                    noRoadNodes++;
+                }
             }
+
+            return noRoadNodes;
         }
 
-        private static void CombineAllGraphsYouCan(HashSet<UndirectedCyclicGraph<int>> allGraphs, 
+        public static void CombineAllGraphsYouCan(HashSet<UndirectedCyclicGraph<int>> allGraphs, 
             UndirectedCyclicGraph<int> modifiedGraph, Node<int> edgeFirstNode, Node<int> edgeSecondNode)
         {
             var graphsToRemove = new HashSet<UndirectedCyclicGraph<int>>();
@@ -106,7 +116,7 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
             }
         }
 
-        private long? CheckEasyCases(int numOfCities, int numOfRoads, long libCost, long roadCost, IEnumerable<Tuple<int, int>> roads)
+        public static long? CheckEasyCases(int numOfCities, int numOfRoads, long libCost, long roadCost, IEnumerable<Tuple<int, int>> roads)
         {
             if (numOfRoads == 0)
             {
@@ -123,7 +133,7 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
             return null;
         }
 
-        private bool IsEasyCase(int numOfRoads, long libCost, long roadCost)
+        public static bool IsEasyCase(int numOfRoads, long libCost, long roadCost)
         {
             return numOfRoads == 0 || libCost <= roadCost;
         }

@@ -46,6 +46,16 @@ namespace Localwire.AlgoToolkit.Graphs
             return true;
         }
 
+        public override bool ClearNodes()
+        {
+            foreach (var node in _nodes.Values)
+            {
+                node.GraphsThatIncludeThisNode.Remove(this);
+            }
+            _nodes.Clear();
+            return true;
+        }
+
         public bool CanCombineWith(UndirectedCyclicGraph<TKey> anotherGraph, Node<TKey> edgeFirstNode, Node<TKey> edgeSecondNode)
         {
             if (anotherGraph == null) return false;
@@ -60,26 +70,8 @@ namespace Localwire.AlgoToolkit.Graphs
             foreach (var node in anotherGraph.Nodes.Values)
             {
                 AddNode(node);
-                node.GraphsThatIncludeThisNode.Remove(anotherGraph);
             }
-            return true;
-        }
-
-        public bool CanCombineWith(UndirectedCyclicGraph<TKey> anotherGraph, TKey nodeCausingCombine)
-        {
-            if (anotherGraph == null) return false;
-            if (anotherGraph.Equals(this)) return false;
-            return anotherGraph.HasNode(nodeCausingCombine);
-        }
-
-        public bool ConnectAnotherGraphToMe(UndirectedCyclicGraph<TKey> anotherGraph, TKey nodeCausingCombine)
-        {
-            if (!CanCombineWith(anotherGraph, nodeCausingCombine)) return false;
-            foreach (var node in anotherGraph.Nodes.Values)
-            {
-                AddNode(node);
-            }
-            return true;
+            return anotherGraph.ClearNodes();
         }
 
         public static UndirectedCyclicGraph<TKey> CreateNewFromFirstEdge(Tuple<TKey, TKey> edge)

@@ -3,6 +3,7 @@ namespace Localwire.AlgoToolkit.Graphs
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Linq;
 
     public class Node<TKey> where TKey : struct
     {
@@ -68,6 +69,35 @@ namespace Localwire.AlgoToolkit.Graphs
         {
             if (node == null) return false;
             return HasNeighbour(node.Key);
+        }
+
+        public int CombineGraphsIBelongTo()
+        {
+            if (GraphsThatIncludeThisNode.Count == 1)
+            {
+                return 1;
+            }
+
+            if (GraphsThatIncludeThisNode.Count == 0)
+            {
+                return 0;
+            }
+
+            UndirectedCyclicGraph<int> firstGraph = GraphsThatIncludeThisNode.Cast<UndirectedCyclicGraph<int>>().First();
+
+            foreach (var graphToCombineFrom in GraphsThatIncludeThisNode
+                .Cast<UndirectedCyclicGraph<int>>()
+                .Where(n => !n.Equals(firstGraph))
+                .ToList())
+            {
+                foreach (var graphsNode in graphToCombineFrom.Nodes.Values)
+                {
+                    firstGraph.AddNode(graphsNode);
+                }
+                graphToCombineFrom.ClearNodes();
+            }
+
+            return GraphsThatIncludeThisNode.Count;
         }
     }
 }

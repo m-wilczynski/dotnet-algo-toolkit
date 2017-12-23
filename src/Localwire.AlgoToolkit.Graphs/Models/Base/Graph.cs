@@ -12,6 +12,7 @@ namespace Localwire.AlgoToolkit.Graphs
         public abstract bool AddEdge(TKey firstNodeKey, TKey secondNodeKey);
         public abstract bool AddEdge(Node<TKey> firstNode, Node<TKey> secondNode);
         public abstract bool RemoveEdge(TKey firstNodeKey, TKey secondNodeKey);
+        public abstract bool ClearNodes();
 
         public bool AddNode(TKey nodeKey)
         {
