@@ -20,7 +20,7 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
                     int numOfRoads = Convert.ToInt32(tokens_n[1]);
                     long libCost = Convert.ToInt64(tokens_n[2]);
                     long roadCost = Convert.ToInt64(tokens_n[3]);
-                    IEnumerable<Tuple<int, int>> roads = GetRoadsFrom(input, numOfRoads, IsEasyCase(numOfCities, libCost, roadCost));
+                    IEnumerable<Tuple<int, int>> roads = GetRoadsFrom(input, numOfRoads, IsEasyCase(numOfRoads, libCost, roadCost));
                     Console.WriteLine(SolveCase(numOfCities, numOfRoads, libCost, roadCost, roads));
                 }
             }
@@ -47,7 +47,7 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
 
         public long SolveCase(int numOfCities, int numOfRoads, long libCost, long roadCost, IEnumerable<Tuple<int, int>> roads)
         {
-            var easyCasesResult = CheckEasyCases(numOfCities, libCost, roadCost, roads);
+            var easyCasesResult = CheckEasyCases(numOfCities, numOfRoads, libCost, roadCost, roads);
             if (easyCasesResult.HasValue) return easyCasesResult.Value;
 
             HashSet<UndirectedCyclicGraph<int>> graphs = new HashSet<UndirectedCyclicGraph<int>>();
@@ -79,7 +79,7 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
                 }
             }
 
-            return graphs.Sum(graph => roadCost * (graph.Nodes.Count - 1) + libCost);
+            return graphs.Sum(graph => roadCost * (graph.Nodes.Count - 1) + libCost) + nodes.Count(n => n.GraphsThatIncludeThisNode.Count == 0) * libCost;
         }
 
         private static void CombineAllGraphsContaining(HashSet<Node<int>> nodes)
@@ -106,9 +106,9 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
             }
         }
 
-        private long? CheckEasyCases(int numOfCities, long libCost, long roadCost, IEnumerable<Tuple<int, int>> roads)
+        private long? CheckEasyCases(int numOfCities, int numOfRoads, long libCost, long roadCost, IEnumerable<Tuple<int, int>> roads)
         {
-            if (roadCost == 0)
+            if (numOfRoads == 0)
             {
                 //Rewind
                 foreach (var road in roads) { }
@@ -123,9 +123,9 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank
             return null;
         }
 
-        private bool IsEasyCase(int numOfCities, long libCost, long roadCost)
+        private bool IsEasyCase(int numOfRoads, long libCost, long roadCost)
         {
-            return roadCost == 0 || libCost <= roadCost;
+            return numOfRoads == 0 || libCost <= roadCost;
         }
     }
 }

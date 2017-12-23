@@ -14,7 +14,7 @@
         static void Main(string[] args)
         {
             //Console.WriteLine(BenchmarkRunner.Run<BenchmarkDummy>());
-            using (TextReader input = File.OpenText(@"C:\\Users\\micha_000\\Desktop\\input04.txt"))
+            using (TextReader input = File.OpenText(@"C:\\Users\\micha_000\\Desktop\\input01.txt"))
             {
                 new RoadsAndLibraries().SolveFromInput(input);
             }
