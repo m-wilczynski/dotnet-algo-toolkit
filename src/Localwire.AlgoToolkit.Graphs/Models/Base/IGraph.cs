@@ -1,8 +1,5 @@
 namespace Localwire.AlgoToolkit.Graphs
 {
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-
     public interface IGraph<TKey> where TKey : struct
     {
         bool AddEdge(TKey firstNodeKey, TKey secondNodeKey);
