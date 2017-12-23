@@ -1,5 +1,6 @@
 namespace Localwire.AlgoToolkit.Graphs
 {
+    using System;
     using System.Linq;
 
     public class UndirectedCyclicGraph<TKey> : Graph<TKey> where TKey : struct
@@ -36,11 +37,12 @@ namespace Localwire.AlgoToolkit.Graphs
         public bool CanCombineWith(UndirectedCyclicGraph<TKey> anotherGraph)
         {
             if (anotherGraph == null) return false;
+            if (anotherGraph.Equals(this)) return false;
             return anotherGraph.Nodes.Values.Any(node => HasNode(node));
         }
 
 
-        public bool CombineGraphs(UndirectedCyclicGraph<TKey> anotherGraph)
+        public bool ConnectAnotherGraphToMe(UndirectedCyclicGraph<TKey> anotherGraph)
         {
             if (!CanCombineWith(anotherGraph)) return false;
             foreach (var node in anotherGraph.Nodes.Values)
@@ -48,6 +50,16 @@ namespace Localwire.AlgoToolkit.Graphs
                 AddNode(node);
             }
             return true;
+        }
+
+        public static UndirectedCyclicGraph<TKey> CreateNewFromFirstEdge(Tuple<TKey, TKey> edge)
+        {
+            if (edge == null)
+                throw new ArgumentNullException(nameof(edge));
+                
+            var graph = new UndirectedCyclicGraph<TKey>();
+            graph.AddEdgeWithNodes(edge.Item1, edge.Item2);
+            return graph;
         }
     }
 }

@@ -43,5 +43,12 @@ namespace Localwire.AlgoToolkit.Graphs
             if (node == null) return false;
             return HasNode(node.Key);
         }
+
+        public bool AddEdgeWithNodes(TKey firstNodeKey, TKey secondNodeKey)
+        {
+            AddNode(firstNodeKey);
+            AddNode(secondNodeKey);
+            return AddEdge(firstNodeKey, secondNodeKey);
+        }        
     }
 }
