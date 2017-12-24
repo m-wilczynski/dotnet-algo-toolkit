@@ -54,7 +54,7 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank.DynamicProgramming
 
         private void GoBackAndFixStuff(int[] childrenScores, int childIndex, ChildrenCandies childrenCandies)
         {
-            if (childIndex != 0 && childrenCandies.CandiesOf(childIndex) > 1) return;
+            if (childIndex != 0 && childrenCandies.CandiesOf(childIndex - 1) > 1) return;
             if (childIndex == 1)
             {
                 childrenCandies.AddCandy(0, 1);
