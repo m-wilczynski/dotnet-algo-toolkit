@@ -8,15 +8,16 @@
     using BenchmarkDotNet.Jobs;
     using BenchmarkDotNet.Running;
     using Localwire.AlgoToolkit.Kata.HackerRank;
+    using Localwire.AlgoToolkit.Kata.HackerRank.DynamicProgramming;
 
     class Program
     {
         static void Main(string[] args)
         {
             //Console.WriteLine(BenchmarkRunner.Run<BenchmarkDummy>());
-            using (TextReader input = File.OpenText(@"C:\\Users\\micha_000\\Desktop\\input01.txt"))
+            using (TextReader input = File.OpenText(@"C:\\Users\\micha_000\\Desktop\\candies01.txt"))
             {
-                new RoadsAndLibraries().SolveFromInput(input);
+                new Candies().SolveFromInput(input);
             }
             Console.WriteLine("DONE");
             Console.ReadLine();
