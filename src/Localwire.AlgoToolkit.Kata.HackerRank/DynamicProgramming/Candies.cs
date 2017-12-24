@@ -25,6 +25,9 @@
         {
             var childrenCandies = new ChildrenCandies(childrenScores.Length);
 
+            if (ShouldReverse(childrenScores, 0.2))
+                childrenScores = childrenScores.Reverse().ToArray();
+
             for (var i = 0; i < childrenScores.Length; i++)
             {
                 if (i == 0)
@@ -55,7 +58,6 @@
 
         private void GoBackAndFixStuff(int[] childrenScores, int childIndex, ChildrenCandies childrenCandies)
         {
-            //if (childIndex != 0 && childrenCandies.CandiesOf(childIndex - 1) > 1) return;
             if (childIndex == 1)
             {
                 childrenCandies.AddCandy(0, 1);
@@ -75,6 +77,16 @@
             {
                 GoBackAndFixStuff(childrenScores, childIndex - 1, childrenCandies);
             }
+        }
+
+        private bool ShouldReverse(int[] array, double percentToCheckForPattern)
+        {
+            for (var i = 0; i < array.Length * percentToCheckForPattern; i++)
+            {
+                if (i == 0) continue;
+                if (array[i] > array[i - 1]) return false;
+            }
+            return true;
         }
 
         public class ChildrenCandies

@@ -15,7 +15,7 @@
         static void Main(string[] args)
         {
             //Console.WriteLine(BenchmarkRunner.Run<BenchmarkDummy>());
-            using (TextReader input = File.OpenText(@"C:\\Users\\micha_000\\Desktop\\candies00.txt"))
+            using (TextReader input = File.OpenText(@"C:\\Users\\micha_000\\Desktop\\candies11.txt"))
             {
                 new Candies().SolveFromInput(input);
             }
