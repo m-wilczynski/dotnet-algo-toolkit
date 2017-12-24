@@ -1,8 +1,9 @@
-﻿using System;
-using System.IO;
-
-namespace Localwire.AlgoToolkit.Kata.HackerRank.DynamicProgramming
+﻿namespace Localwire.AlgoToolkit.Kata.HackerRank.DynamicProgramming
 {
+    using System;
+    using System.IO;
+    using System.Linq;
+
     public class Candies
     {
         public void SolveFromInput(TextReader input)
@@ -54,14 +55,23 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank.DynamicProgramming
 
         private void GoBackAndFixStuff(int[] childrenScores, int childIndex, ChildrenCandies childrenCandies)
         {
-            if (childIndex != 0 && childrenCandies.CandiesOf(childIndex - 1) > 1) return;
+            //if (childIndex != 0 && childrenCandies.CandiesOf(childIndex - 1) > 1) return;
             if (childIndex == 1)
             {
                 childrenCandies.AddCandy(0, 1);
                 return;
             }
-            childrenCandies.AddCandy(childIndex - 1, 1);
-            if (childrenScores[childIndex - 2] != childrenScores[childIndex - 1])
+
+            var currentChildCandies = childrenCandies.CandiesOf(childIndex);
+            //Apply setting minimal candy prematurely for check below
+            if (currentChildCandies == 0) currentChildCandies = 1;
+
+            if (childrenCandies.CandiesOf(childIndex - 1) <= currentChildCandies)
+            {
+                childrenCandies.AddCandy(childIndex - 1, 1);
+            }
+
+            if (childrenScores[childIndex - 2] > childrenScores[childIndex - 1])
             {
                 GoBackAndFixStuff(childrenScores, childIndex - 1, childrenCandies);
             }
@@ -73,6 +83,7 @@ namespace Localwire.AlgoToolkit.Kata.HackerRank.DynamicProgramming
             private readonly int[] _childrenCandiesCount;
 
             public long TotalCandies => _totalCandies;
+            private long SecretTotal => _childrenCandiesCount.Sum();
 
             public ChildrenCandies(int childrenCount)
             {
